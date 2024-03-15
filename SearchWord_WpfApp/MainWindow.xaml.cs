@@ -95,6 +95,7 @@ namespace SearchWord_WpfApp
         {
             string directoryPath = directoryTextBox.Text;
             string searchWord = searchWordTextBox.Text;
+            bool filesFound = false;
 
             if (string.IsNullOrWhiteSpace(directoryPath) || string.IsNullOrWhiteSpace(searchWord))
             {
@@ -110,30 +111,42 @@ namespace SearchWord_WpfApp
 
                 if (progressBar.Value == 100)
                 {
-                    if (sendEmailCheckBox.IsChecked == true)
+                    if (foundWordPathListBox.Items.Count > 0)
                     {
-                        await AddMassagEmailsAsync();
-                        SaveToFile("ResultSearch.txt");
+                        filesFound = true; 
                     }
 
-                    if (saveToFileCheckBox.IsChecked == true && dialog != null && !string.IsNullOrEmpty(dialog.FileName))
+                    if (!filesFound)
                     {
-                        SaveToFile(dialog.FileName);
+                        MessageBox.Show("Files with the specified word were not found."); 
                     }
-                    else if (saveToFileCheckBox.IsChecked == true)
+                    else
                     {
-                        SaveToFile("ResultSearch.txt");
-                    }
+                        if (sendEmailCheckBox.IsChecked == true && filesFound == true)
+                        {
+                            await AddMassagEmailsAsync();
+                        }
 
-                    if (MessageBox.Show("The search operation has been completed.", "Search Completed", MessageBoxButton.OK) == MessageBoxResult.OK)
-                    {
-                        // ClearParameters();
+                        if (saveToFileCheckBox.IsChecked == true && dialog != null && !string.IsNullOrEmpty(dialog.FileName) && filesFound == true)
+                        {
+                            SaveToFile(dialog.FileName);
+                        }
+                        if (saveToFileCheckBox.IsChecked == true && filesFound == true)
+                        {
+                            SaveToFile("ResultSearch.txt");
+                        }
+
+                        if (MessageBox.Show("The search operation has been completed.", "Search Completed", MessageBoxButton.OK) == MessageBoxResult.OK)
+                        {
+                            // ClearParameters();
+                        }
                     }
                 }
             }
             catch (OperationCanceledException)
             {
                 MessageBox.Show("Search operation cancelled.");
+
             }
             catch (Exception ex)
             {
