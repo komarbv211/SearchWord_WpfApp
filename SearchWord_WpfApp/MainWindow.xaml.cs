@@ -205,14 +205,7 @@ namespace SearchWord_WpfApp
                 foreach (var item in foundWordPathListBox.Items)
                 {
                     bodyBuilder.TextBody += item.ToString() + Environment.NewLine;
-                    var attachment = new MimePart("application", "octet-stream")
-                    {
-                        Content = new MimeContent(File.OpenRead(item.ToString()), ContentEncoding.Default),
-                        ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                        ContentTransferEncoding = ContentEncoding.Base64,
-                        FileName = Path.GetFileName(item.ToString())
-                    };
-                    bodyBuilder.Attachments.Add(attachment);
+                    bodyBuilder.Attachments.Add(item.ToString());
                 }
                 message.Body = bodyBuilder.ToMessageBody();
 
