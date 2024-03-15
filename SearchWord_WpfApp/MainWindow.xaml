@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="8*" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="directoryTextBox" Grid.Row="0" Margin="5" VerticalAlignment="Center" HorizontalContentAlignment="Left" Text="C:\Users\andri\OneDrive\Рабочий стол" IsEnabledChanged="directoryTextBox_IsEnabledChanged"  />
+        <TextBox x:Name="directoryTextBox" Grid.Row="0" Margin="5" VerticalAlignment="Center" HorizontalContentAlignment="Left" Text="C:\Users\andri\OneDrive\Рабочий стол"  />
         <Button x:Name="browseButton" Content="Search in"  Grid.Row="0" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" Click="browseButton_Click" Width="75" Height="25"/>
         <TextBox x:Name="searchWordTextBox" Grid.Row="1" Margin="5" VerticalAlignment="Center" HorizontalContentAlignment="Left" Text="Hello" />
         <CheckBox x:Name="saveToFileCheckBox" Content="Save to File" Margin="5" Grid.Row="2" Checked="saveToFileCheckBox_Checked" Unchecked="saveToFileCheckBox_Unchecked"/>

@@ -113,6 +113,7 @@ namespace SearchWord_WpfApp
                     if (sendEmailCheckBox.IsChecked == true)
                     {
                         await AddMassagEmailsAsync();
+                        SaveToFile("ResultSearch.txt");
                     }
 
                     if (saveToFileCheckBox.IsChecked == true && dialog != null && !string.IsNullOrEmpty(dialog.FileName))
@@ -185,12 +186,20 @@ namespace SearchWord_WpfApp
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress("SearchWord", "cyberdron@ukr.net"));
                 message.To.Add(new MailboxAddress("Andrii", "cyberdron@ukr.net"));
-                message.Subject = "Результаты поиска";
+                message.Subject = "Результати пошуку";
 
                 var bodyBuilder = new BodyBuilder();
                 foreach (var item in foundWordPathListBox.Items)
                 {
                     bodyBuilder.TextBody += item.ToString() + Environment.NewLine;
+                    var attachment = new MimePart("application", "octet-stream")
+                    {
+                        Content = new MimeContent(File.OpenRead(item.ToString()), ContentEncoding.Default),
+                        ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                        ContentTransferEncoding = ContentEncoding.Base64,
+                        FileName = Path.GetFileName(item.ToString())
+                    };
+                    bodyBuilder.Attachments.Add(attachment);
                 }
                 message.Body = bodyBuilder.ToMessageBody();
 
@@ -201,6 +210,7 @@ namespace SearchWord_WpfApp
                 MessageBox.Show($"An error occurred while creating message: {ex.Message}");
             }
         }
+
         private async Task AddMessageToFolderAsync(MimeMessage message, string folderName)
         {
             string host = "imap.ukr.net";
@@ -228,31 +238,5 @@ namespace SearchWord_WpfApp
                 MessageBox.Show($"An error occurred while adding message to folder: {ex.Message}");
             }
         }
-
-        private async void directoryTextBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            // Отримати шлях до директорії від користувача та викликати асинхронний метод для пошуку слова
-            string directoryPath = directoryTextBox.Text;
-            string searchWord = searchWordTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(directoryPath) || string.IsNullOrWhiteSpace(searchWord))
-            {
-                MessageBox.Show("Please enter directory path and search word.");
-                return;
-            }
-
-            try
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                var progress = new Progress<int>(percentComplete => progressBar.Value = percentComplete);
-
-                await SearchWordInFilesAsync(directoryPath, searchWord, cancellationTokenSource.Token, progress);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}");
-            }
-
-        }
     }
-    }
+}
